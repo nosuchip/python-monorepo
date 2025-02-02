@@ -1,0 +1,10 @@
+[project]
+name = "my-monorepo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["packages/pkg-requests", "packages/pkg-settings", "packages/pkg-database", "apps/app1", "apps/app2", "apps/app3"]
