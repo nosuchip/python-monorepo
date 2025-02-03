@@ -5,7 +5,12 @@ description = "Default template for PDM package"
 authors = [
     {name = "Alex Xela", email = "h825@pm.me"},
 ]
-dependencies = []
+dependencies = [
+    "fastapi",
+    "pkg-database @ file:///${PROJECT_ROOT}/../../packages/pkg-database",
+    "pkg-settings @ file:///${PROJECT_ROOT}/../../packages/pkg-settings",
+    "uvicorn"
+]
 requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}

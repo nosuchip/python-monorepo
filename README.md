@@ -7,6 +7,7 @@ This branch contains pdm-related experiments. Each package/app initialized with 
 - apps1:
   - fastapi
   - pkg-database
+  - pkg-settings
 - app2:
   - fastapi
   - pkg-requests
@@ -14,18 +15,12 @@ This branch contains pdm-related experiments. Each package/app initialized with 
   - fastapi
   - pkg-settings
 
-# NOTES
-
-Failed to add editable dependency from package to package
-
-```
-$ pdm add -p packages/pkg-database -e ./packages/pkg-settings
-[PdmUsageError]: Cannot add editables to the default or optional dependency group
+# Build docker
+```shell
+docker build --build-arg APPLICATION=app1 -f etc/docker/Dockerfile .
 ```
 
-same
-
-```
-$ pdm add -p packages/pkg-database -e ./packages/pkg-settings -G dev-dependencies
-[PdmUsageError]: Cannot add editables to the default or optional dependency group
+# Run docker
+```shell
+docker run -it <image-id> pdm run uvicorn main:app --host 0.0.0.0 --port 8080
 ```
