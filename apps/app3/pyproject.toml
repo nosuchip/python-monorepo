@@ -5,7 +5,9 @@ description = "Default template for PDM package"
 authors = [
     {name = "Alex Xela", email = "h825@pm.me"},
 ]
-dependencies = []
+dependencies = [
+    "pkg-settings @ file:///${PROJECT_ROOT}/../../packages/pkg-settings",
+]
 requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}
