@@ -16,11 +16,21 @@ This branch contains pdm-related experiments. Each package/app initialized with 
   - pkg-settings
 
 # Build docker
+
 ```shell
-docker build --build-arg APPLICATION=app1 -f etc/docker/Dockerfile .
+docker build --build-arg APPLICATION=app2 -t monorepo-exp:latest -f ./etc/docker/Dockerfile .
 ```
 
 # Run docker
+
+Fastapi:
+
 ```shell
 docker run -it <image-id> pdm run uvicorn main:app --host 0.0.0.0 --port 8080
+```
+
+Shell:
+
+```shell
+docker run -it --name monorepo-exp --rm --entrypoint /bin/bash monorepo-exp:latest
 ```
