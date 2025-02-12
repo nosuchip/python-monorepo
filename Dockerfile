@@ -10,17 +10,13 @@ ARG APPLICATION
 # Copy only the dependency files for the specific service
 COPY apps/${APPLICATION}/pyproject.toml uv.lock ./
 
-RUN uv sync --locked --no-install-workspace
 
-COPY packages /app/packages
-RUN uv sync --locked --no-editable --package
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project --package ${APPLICATION} --no-install-workspace
 
-# # Install uv
-# RUN pip install --no-cache-dir uv
-
-# # Generate a requirements file for the specific service
-# RUN uv pip freeze --workspace apps/${APPLICATION} > requirements.txt \
-#     && pip install --no-cache-dir --prefix=/install -r requirements.txt
+COPY . .
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-editable --package ${APPLICATION}
 
 # === Stage 2: Final runtime container ===
 FROM python:3.11-slim
@@ -30,11 +26,13 @@ WORKDIR /app
 # Build argument for selecting the service
 ARG APPLICATION
 
-# Copy installed dependencies from the builder stage
-COPY --from=builder /install /usr/local
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/apps/${APPLICATION}/src /app
+WORKDIR /app
 
-# Copy only the source code for the selected service
-COPY apps/${APPLICATION}/src/${APPLICATION} /app/${APPLICATION}
+ENV PATH="/app/.venv/bin:$PATH"
+
+EXPOSE 8000
 
 # Run FastAPI application
 CMD ["uvicorn", "app1.main:app", "--host", "0.0.0.0", "--port", "8000"]

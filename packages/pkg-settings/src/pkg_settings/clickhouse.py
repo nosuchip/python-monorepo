@@ -1,8 +1,9 @@
 from pydantic_settings import BaseSettings
 
+
 class ClickHouseSettings(BaseSettings):
-    host: str = "localhost"
-    port: int = 8123
-    user: str = "default"
-    password: str = ""
-    database: str = "default"
+    CLICKHOUSE_HOST: str = "localhost"
+    CLICKHOUSE_PORT: int = 8123
+    CLICKHOUSE_USER: str = "default"
+    CLICKHOUSE_PASSWORD: str = ""
+    CLICKHOUSE_DATABASE: str = "default"
