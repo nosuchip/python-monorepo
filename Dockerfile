@@ -1,31 +1,34 @@
-# Use official Python image
-FROM python:3.11
+# === Stage 1: Install dependencies ===
+FROM python:3.11-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Install UV package manager
-RUN pip install uv
+# Build argument for selecting the service
+ARG APPLICATION
 
-# Copy project files from monorepo root
-COPY pyproject.toml uv.lock /app/
-COPY apps/app1/pyproject.toml /app/
-COPY apps/app1/src /app/src
+# Copy only the dependency files for the specific service
+COPY apps/${APPLICATION}/pyproject.toml ./uv.lock ./
 
-# Copy local dependency pkg-database
-COPY packages/pkg-database /app/packages/pkg-database
+# Install uv
+RUN pip install --no-cache-dir uv
 
-# Set working directory before installing dependencies
+# Generate a requirements file for the specific service
+RUN uv pip freeze --workspace apps/${APPLICATION} > requirements.txt \
+    && pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# === Stage 2: Final runtime container ===
+FROM python:3.11-slim
+
 WORKDIR /app
 
-# Install local dependency first
-RUN uv pip install --system -e /app/packages/pkg-database
+# Build argument for selecting the service
+ARG APPLICATION
 
-# Install all remaining dependencies
-RUN uv pip install --system .
+# Copy installed dependencies from the builder stage
+COPY --from=builder /install /usr/local
 
-# Expose port
-EXPOSE 8001
+# Copy only the source code for the selected service
+COPY apps/${APPLICATION}/src/${APPLICATION} /app/${APPLICATION}
 
-# Command to run the FastAPI app
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8001"]
+# Run FastAPI application
+CMD ["uvicorn", "app1.main:app", "--host", "0.0.0.0", "--port", "8000"]
