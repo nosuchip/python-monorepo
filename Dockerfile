@@ -1,5 +1,6 @@
 # === Stage 1: Install dependencies ===
 FROM python:3.11-slim AS builder
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
@@ -7,14 +8,19 @@ WORKDIR /app
 ARG APPLICATION
 
 # Copy only the dependency files for the specific service
-COPY apps/${APPLICATION}/pyproject.toml ./uv.lock ./
+COPY apps/${APPLICATION}/pyproject.toml uv.lock ./
 
-# Install uv
-RUN pip install --no-cache-dir uv
+RUN uv sync --locked --no-install-workspace
 
-# Generate a requirements file for the specific service
-RUN uv pip freeze --workspace apps/${APPLICATION} > requirements.txt \
-    && pip install --no-cache-dir --prefix=/install -r requirements.txt
+COPY packages /app/packages
+RUN uv sync --locked --no-editable --package
+
+# # Install uv
+# RUN pip install --no-cache-dir uv
+
+# # Generate a requirements file for the specific service
+# RUN uv pip freeze --workspace apps/${APPLICATION} > requirements.txt \
+#     && pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # === Stage 2: Final runtime container ===
 FROM python:3.11-slim
