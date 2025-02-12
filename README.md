@@ -66,3 +66,31 @@ To regenerate lock-file in the project root use command
 ```
 uv lock
 ```
+
+# New components
+
+### Adding new package
+
+```
+uv init --lib ./packages/pkg-data
+```
+
+### Adding new service
+
+While UV create apps with just `init` it is recommended to use the same command as for package with just path fixing:
+
+```
+uv init --lib ./apps/apps5
+```
+
+and then remove from `pyproject.toml` followig tables:
+
+- tool.hatch.build.targets.wheel
+- tool.uv.sources
+- build-system
+
+It will generate `src`-based code structure. By fact you cant use `uv init ./apps/app5` and just create `src/<SERVICE_NAME>/main.py` manually.
+
+### UV init --lib vs --package
+
+Creating new lib implies package. Creating new package by fact creates the same file structure but main intention is to make something packageable. So for package `pyproject.toml` will contains table `python.script` and for lib - will not. But everything else will be the same.

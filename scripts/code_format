@@ -1,0 +1,3 @@
+#!/bin/sh
+
+uv run python3.11 -m ruff format --config=./ruff.toml
