@@ -30,9 +30,10 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/apps/${APPLICATION}/src /app
 WORKDIR /app
 
-ENV PATH="/app/.venv/bin:$PATH"
-
 EXPOSE 8000
 
-# Run FastAPI application
-CMD ["uvicorn", "app1.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV PATH="/app/.venv/bin:$PATH"
+ENV APPLICATION=${APPLICATION}
+
+# CMD ["uvicorn", "${APPLICATION}.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD exec uvicorn "$APPLICATION.main:app" --host 0.0.0.0 --port 8000

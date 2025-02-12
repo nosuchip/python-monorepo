@@ -4,10 +4,18 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-    "pkg-settings",
-    "uvicorn>=0.34.0",
-]
+dependencies = ["fastapi>=0.115.8", "pkg-settings", "uvicorn>=0.34.0"]
 
 [tool.uv.sources]
 pkg-settings = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "pytest-env>=1.1.5",
+    "pytest-mock>=3.14.0",
+    "ruff>=0.9.6",
+]
