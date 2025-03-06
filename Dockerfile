@@ -10,6 +10,8 @@ ARG APPLICATION
 # Copy only the dependency files for the specific service
 COPY apps/${APPLICATION}/pyproject.toml uv.lock ./
 
+RUN pwd
+RUN ls -lA
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --package ${APPLICATION} --no-install-workspace
